@@ -5,7 +5,7 @@ var bodyParser = require("body-parser");
 var connection = mysql.createConnection({
     host : 'localhost',
     user : 'root',
-    password : 'root',
+    password : '',
     database : 'db_rw',
     });
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -54,7 +54,82 @@ app.get('/dataWarga',function (req,res) {
     })
 });
 
-app.post('/dataWarga',function (req,res) {
+app.post('/informasi',function (req,res){
+    var kodePengumuman = req.body.kode_penugmuman;
+    var Judul = req.body.judul;
+    var tanggalPublikasi = req.body.tanggal_publikasi;
+    var Konten = req.body.konten;
+    var Sumber = req.body.sumber;
+    var data ={
+        "error":1,
+        "Informasi":""
+    };
+    if(!!kodePengumuman && !!Judul && !!tanggalPublikasi && !!Konten && !!Sumber ){
+        connection.query("INSERT INTO tb_pengumuman VALUES(?,?,?,?,?)",[kodePengumuman,Judul,tanggalPublikasi,Konten,Sumber],function(err,rows,fields){
+            if(!!err){
+                data["Informasi"] = "kesalahan penambahan data";
+            }else{
+                data["error"] = 0;
+                data["Informasi"] = "Data informasi telah berhasil ditambahkan";
+            }
+            res.json(data);
+        });
+    }else{
+        data["Informasi"] = "inputkan data berdasarkan (i.e : judul,tanggal_publikasi,kontent,sumber";
+        res.json(data);
+    }
+
+
+});
+
+app.put('/informasi',function (req,res){
+    var kodePengumuman = req.body.kode_penugmuman;
+    var Judul = req.body.judul;
+    var tanggalPublikasi = req.body.tanggal_publikasi;
+    var Konten = req.body.konten;
+    var Sumber = req.body.sumber;
+    var data ={
+        "error":1,
+        "Informasi":""
+    };
+    if(!!kodePengumuman && !!Judul && !!tanggalPublikasi && !!Konten && !!Sumber ){
+        connection.query("UPDATE tb_pengumuman SET judul=?, tanggal_publikasi=?, konten=?, sumber=? WHERE kode_penugmuman=?",[Judul,tanggalPublikasi,Konten,Sumber,kodePengumuman],function(err,rows,fields){
+            if(!!err){
+                data["Informasi"] = "kesalahan pengubahan data";
+            }else{
+                data["error"] = 0;
+                data["Informasi"] = "Data informasi telah berhasil diubah";
+            }
+            res.json(data);
+        });
+    }else{
+        data["Informasi"] = "inputkan data berdasarkan (i.e : judul,tanggal_publikasi,kontent,sumber";
+        res.json(data);
+    }
+
+
+});
+
+app.delete('/informasi',function (req,res){
+    var kodePengumuman = req.body.kode_penugmuman;
+    var data ={
+        "error":1,
+        "Informasi":""
+    };
+    if(!!kodePengumuman){
+        connection.query("DELETE from tb_pengumuman WHERE kode_penugmuman=?",[kodePengumuman],function(err,rows,fields){
+            if(!!err){
+                data["Informasi"] = "kesalahan pengubahan data";
+            }else{
+                data["error"] = 0;
+                data["Informasi"] = "Data informasi telah berhasil diubah";
+            }
+            res.json(data);
+        });
+    }else{
+        data["Informasi"] = "inputkan data berdasarkan (i.e : judul,tanggal_publikasi,kontent,sumber";
+        res.json(data);
+    }
 
 
 });
