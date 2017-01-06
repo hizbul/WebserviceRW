@@ -20,23 +20,7 @@ app.get('/',function(req,res){
     res.json(data);
 });
 
-app.get('/informasi',function (req,res) {
-    var data = {
-        "error":1,
-        "informasi":""
-    };
-    connection.query("SELECT * from tb_pengumuman", function (err, rows, fields) {
-      if (rows.length !=0){
-          data["error"] = 0;
-          data["Pengumuman"] = rows;
-          res.json(data);
-      } else{
-          data["Pengumuman"] = 'Tidak Ada Pengumuman...';
-          res.json(data);
-      }
-    })
-});
-
+// Mengambil data warga
 app.get('/dataWarga',function (req,res) {
     var data = {
         "error":1,
@@ -54,6 +38,91 @@ app.get('/dataWarga',function (req,res) {
     })
 });
 
+// Add data warga
+app.post('/dataWarga',function (req,res){
+    var noIdentitas = req.body.no_identitas;
+    var Nama = req.body.nama;
+    var tempatLahir = req.body.tempat_lahir;
+    var tanggalLahir = req.body.tanggal_lahir;
+    var Alamat = req.body.alamat;
+    var rtRw= req.body.rt/rw;
+    var kelDesa = req.body.kel/desa;
+    var Kecamatan = req.body.kecamatan;
+    var Agama = req.body.agama;
+    var statusPerkawinan= req.body.status_perkawinan;
+    var statusKependudukan= req.body.status_kependudukan;
+    var data ={
+        "error":1,
+        "Informasi":""
+    };
+    if(!!noIdentitas && !!Nama && !!tempatLahir && !!tanggalLahir && !!Alamat && !!rtRw && !!kelDesa && !!Kecamatan && !!Agama && !!statusPerkawinan && !!statusKependudukan){
+        connection.query("INSERT INTO tb_penduduk VALUES(?,?,?,?,?,?,?,?,?,?,?)",[noIdentitas,Nama,tempatLahir,tanggalLahir,Alamat,rtRw,kelDesa,Kecamatan,Agama,statusPerkawinan,statusKependudukan],function(err,rows,fields){
+            if(!!err){
+                data["Informasi"] = "kesalahan penambahan data";
+            }else{
+                data["error"] = 0;
+                data["Informasi"] = "Data kependudukan telah berhasil ditambahkan";
+            }
+            res.json(data);
+        });
+    }else{
+        data["Informasi"] = "inputkan data berdasarkan (i.e : judul,tanggal_publikasi,kontent,sumber";
+        res.json(data);
+    }
+});
+
+// Edit data warga
+app.put('/dataWarga',function (req,res){
+    var noIdentitas = req.body.no_identitas;
+    var Nama = req.body.nama;
+    var tempatLahir = req.body.tempat_lahir;
+    var tanggalLahir = req.body.tanggal_lahir;
+    var Alamat = req.body.alamat;
+    var rtRw= req.body.rt/rw;
+    var kelDesa = req.body.kel/desa;
+    var Kecamatan = req.body.kecamatan;
+    var Agama = req.body.agama;
+    var statusPerkawinan= req.body.status_perkawinan;
+    var statusKependudukan= req.body.status_kependudukan;
+    var data ={
+        "error":1,
+        "Informasi":""
+    };
+    if(!!noIdentitas && !!Nama && !!tempatLahir && !!tanggalLahir && !!Alamat && !!rtRw && !!kelDesa && !!Kecamatan && !!Agama && !!statusPerkawinan && !!statusKependudukan){
+            connection.query("UPDATE tb_penduduk SET no_identitas=?, nama=?, konten=?, tempat_lahir=?, tanggal_lahir=?, alamat=?, rt/rw=?, kel/desa=?, kecamatan=?, agama=?, status_perkawinan=?, status_kependudukan=?  WHERE no_identitas=?",[noIdentitas,Nama,tempatLahir,tanggalLahir,Alamat,rtRw,kelDesa,Kecamatan,Agama,statusPerkawinan,statusKependudukan,noIdentitas],function(err,rows,fields){
+            if(!!err){
+                data["Informasi"] = "kesalahan penambahan data";
+            }else{
+                data["error"] = 0;
+                data["Informasi"] = "Data kependudukan telah berhasil ditambahkan";
+            }
+            res.json(data);
+        });
+    }else{
+        data["Informasi"] = "inputkan data berdasarkan (i.e : judul,tanggal_publikasi,kontent,sumber";
+        res.json(data);
+    }
+});
+
+// Mengambil data informasi
+app.get('/informasi',function (req,res) {
+    var data = {
+        "error":1,
+        "informasi":""
+    };
+    connection.query("SELECT * from tb_pengumuman", function (err, rows, fields) {
+        if (rows.length !=0){
+            data["error"] = 0;
+            data["Pengumuman"] = rows;
+            res.json(data);
+        } else{
+            data["Pengumuman"] = 'Tidak Ada Pengumuman...';
+            res.json(data);
+        }
+    })
+});
+
+// Add data informasi
 app.post('/informasi',function (req,res){
     var kodePengumuman = req.body.kode_penugmuman;
     var Judul = req.body.judul;
@@ -78,10 +147,9 @@ app.post('/informasi',function (req,res){
         data["Informasi"] = "inputkan data berdasarkan (i.e : judul,tanggal_publikasi,kontent,sumber";
         res.json(data);
     }
-
-
 });
 
+// Edit data informasi
 app.put('/informasi',function (req,res){
     var kodePengumuman = req.body.kode_penugmuman;
     var Judul = req.body.judul;
@@ -106,10 +174,9 @@ app.put('/informasi',function (req,res){
         data["Informasi"] = "inputkan data berdasarkan (i.e : judul,tanggal_publikasi,kontent,sumber";
         res.json(data);
     }
-
-
 });
 
+// Hapus data informasi
 app.delete('/informasi',function (req,res){
     var kodePengumuman = req.body.kode_penugmuman;
     var data ={
@@ -130,8 +197,6 @@ app.delete('/informasi',function (req,res){
         data["Informasi"] = "inputkan data berdasarkan (i.e : judul,tanggal_publikasi,kontent,sumber";
         res.json(data);
     }
-
-
 });
 
 http.listen(5000,function(){
